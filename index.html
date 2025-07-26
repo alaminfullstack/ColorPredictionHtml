@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorTrade Pro - Professional Color Prediction Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .number-ball {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .number-ball:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #4f46e5;
+            color: #4f46e5;
+        }
+        
+        .status-online {
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        .market-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .market-up {
+            background: #10b981;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .market-down {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-2xl">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white bg-opacity-20 p-3 rounded-xl">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">ColorTrade Pro</h1>
+                        <p class="text-blue-100 text-sm">Professional Trading Platform</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <div class="status-online w-3 h-3 rounded-full"></div>
+                        <span class="text-sm font-medium">Live Market</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-blue-100">Balance</div>
+                        <div class="text-xl font-bold" id="userBalance">₹17,215.00</div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 p-2 rounded-lg cursor-pointer hover:bg-opacity-30 transition-all">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-8">
+                <button class="nav-tab py-4 px-2 text-sm font-medium tab-active" data-tab="trading">
+                    <i class="fas fa-chart-bar mr-2"></i>Trading
+                </button>
+                <button class="nav-tab py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="analytics">
+                    <i class="fas fa-analytics mr-2"></i>Analytics
+                </button>
+                <button class="nav-tab py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="history">
+                    <i class="fas fa-history mr-2"></i>History
+                </button>
+                <button class="nav-tab py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-700" data-tab="admin">
+                    <i class="fas fa-cogs mr-2"></i>Admin
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        
+        <!-- Trading Tab -->
+        <div id="trading-tab" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Game Panel -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+                        <!-- Period Info -->
+                        <div class="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 text-white mb-6">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-sm opacity-90">Current Period</div>
+                                    <div class="text-2xl font-bold" id="currentPeriod">290</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm opacity-90">Total Amount</div>
+                                    <div class="text-2xl font-bold" id="totalAmount">₹17,215</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-between items-center">
+                                <div>
+                                    <div class="text-sm opacity-90">Time Remaining</div>
+                                    <div class="text-3xl font-bold font-mono" id="timeRemaining">01:13</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm opacity-90">Players</div>
+                                    <div class="text-xl font-bold" id="playersCount">127</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Betting Section -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Select Color</h3>
+                            <div class="grid grid-cols-3 gap-4">
+                                <button class="color-bet-btn btn-success text-white py-4 px-6 rounded-xl font-semibold text-lg hover:shadow-lg transition-all" data-color="green">
+                                    <i class="fas fa-circle mr-2"></i>Green
+                                    <div class="text-sm opacity-90 mt-1">2x Payout</div>
+                                </button>
+                                <button class="color-bet-btn btn-warning text-white py-4 px-6 rounded-xl font-semibold text-lg hover:shadow-lg transition-all" data-color="violet">
+                                    <i class="fas fa-circle mr-2"></i>Violet
+                                    <div class="text-sm opacity-90 mt-1">4.5x Payout</div>
+                                </button>
+                                <button class="color-bet-btn btn-danger text-white py-4 px-6 rounded-xl font-semibold text-lg hover:shadow-lg transition-all" data-color="red">
+                                    <i class="fas fa-circle mr-2"></i>Red
+                                    <div class="text-sm opacity-90 mt-1">2x Payout</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Number Selection -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Select Number</h3>
+                            <div class="grid grid-cols-5 gap-3" id="numberGrid">
+                                <!-- Numbers will be generated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Bet Amount -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Bet Amount</h3>
+                            <div class="flex space-x-3 mb-3">
+                                <button class="bet-amount-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium transition-all" data-amount="10">₹10</button>
+                                <button class="bet-amount-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium transition-all" data-amount="50">₹50</button>
+                                <button class="bet-amount-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium transition-all" data-amount="100">₹100</button>
+                                <button class="bet-amount-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-medium transition-all" data-amount="500">₹500</button>
+                            </div>
+                            <input type="number" id="betAmount" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter custom amount" min="1">
+                        </div>
+
+                        <!-- Place Bet Button -->
+                        <button id="placeBetBtn" class="w-full btn-primary text-white py-4 rounded-xl font-semibold text-lg">
+                            <i class="fas fa-dice mr-2"></i>Place Bet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Side Panel -->
+                <div class="space-y-6">
+                    <!-- Market Stats -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Market Statistics</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Green Trend</span>
+                                <div class="flex items-center">
+                                    <div class="market-indicator market-up"></div>
+                                    <span class="text-green-600 font-semibold">32%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Violet Trend</span>
+                                <div class="flex items-center">
+                                    <div class="market-indicator market-down"></div>
+                                    <span class="text-purple-600 font-semibold">18%</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Red Trend</span>
+                                <div class="flex items-center">
+                                    <div class="market-indicator market-up"></div>
+                                    <span class="text-red-600 font-semibold">50%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Results -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Results</h3>
+                        <div class="space-y-2" id="recentResults">
+                            <!-- Recent results will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Current Bets -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Active Bets</h3>
+                        <div id="activeBets">
+                            <p class="text-gray-500 text-center">No active bets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Win Rate Analysis</h3>
+                    <canvas id="winRateChart" style="height: 300px;"></canvas>
+                </div>
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Betting Trends</h3>
+                    <canvas id="trendChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Performance Overview</h3>
+                <canvas id="performanceChart" style="height: 400px;"></canvas>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Transaction History</h3>
+                    <div class="flex space-x-2">
+                        <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-all">Export</button>
+                        <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all">Filter</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full table-auto">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Period</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bet Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profit/Loss</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionHistory" class="bg-white divide-y divide-gray-200">
+                            <!-- Transaction history will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="admin-tab" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Win Rate Configuration</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Green Win Rate (%)</label>
+                            <input type="range" id="greenWinRate" class="w-full" min="0" max="100" value="48">
+                            <div class="text-center text-sm text-gray-600 mt-1" id="greenWinRateValue">48%</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Violet Win Rate (%)</label>
+                            <input type="range" id="violetWinRate" class="w-full" min="0" max="100" value="20">
+                            <div class="text-center text-sm text-gray-600 mt-1" id="violetWinRateValue">20%</div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Red Win Rate (%)</label>
+                            <input type="range" id="redWinRate" class="w-full" min="0" max="100" value="52">
+                            <div class="text-center text-sm text-gray-600 mt-1" id="redWinRateValue">52%</div>
+                        </div>
+                        <button class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-all">
+                            Update Win Rates
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-xl p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">System Controls</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Game Duration (seconds)</label>
+                            <input type="number" id="gameDuration" class="w-full p-3 border border-gray-300 rounded-lg" value="90">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Bet Amount</label>
+                            <input type="number" id="minBet" class="w-full p-3 border border-gray-300 rounded-lg" value="10">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Maximum Bet Amount</label>
+                            <input type="number" id="maxBet" class="w-full p-3 border border-gray-300 rounded-lg" value="5000">
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-all">
+                                <i class="fas fa-play mr-2"></i>Start Game
+                            </button>
+                            <button class="flex-1 bg-red-600 text-white py-3 rounded-lg font-semibold hover:bg-red-700 transition-all">
+                                <i class="fas fa-stop mr-2"></i>Stop Game
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 slide-in">
+            <div class="text-center">
+                <div class="mb-4">
+                    <div id="resultNumber" class="number-ball mx-auto mb-4" style="width: 80px; height: 80px; font-size: 2rem;"></div>
+                </div>
+                <h3 class="text-2xl font-bold mb-2" id="resultTitle">Result</h3>
+                <p class="text-gray-600 mb-4" id="resultDescription"></p>
+                <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span>Bet Amount:</span>
+                        <span class="font-semibold" id="resultBetAmount">₹0</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span>Profit/Loss:</span>
+                        <span class="font-semibold" id="resultProfit">₹0</span>
+                    </div>
+                </div>
+                <button id="closeResultModal" class="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-all">
+                    Continue Playing
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            period: 290,
+            balance: 17215,
+            timeRemaining: 73,
+            isGameActive: true,
+            currentBets: [],
+            gameHistory: [],
+            winRates: { green: 48, violet: 20, red: 52 },
+            selectedColor: null,
+            selectedNumber: null,
+            betAmount: 0,
+            recentResults: []
+        };
+
+        // DOM Elements
+        const elements = {
+            balance: document.getElementById('userBalance'),
+            period: document.getElementById('currentPeriod'),
+            timer: document.getElementById('timeRemaining'),
+            totalAmount: document.getElementById('totalAmount'),
+            playersCount: document.getElementById('playersCount'),
+            betAmount: document.getElementById('betAmount'),
+            placeBetBtn: document.getElementById('placeBetBtn'),
+            resultModal: document.getElementById('resultModal'),
+            numberGrid: document.getElementById('numberGrid'),
+            recentResults: document.getElementById('recentResults'),
+            activeBets: document.getElementById('activeBets')
+        };
+
+        // Initialize Game
+        function initGame() {
+            createNumberGrid();
+            setupEventListeners();
+            startGameTimer();
+            initCharts();
+            populateTransactionHistory();
+            updateDisplay();
+        }
+
+        // Create Number Grid
+        function createNumberGrid() {
+            const colors = {
+                0: 'linear-gradient(135deg, #8b5cf6, #a855f7)', // violet
+                1: 'linear-gradient(135deg, #10b981, #059669)', // green
+                2: 'linear-gradient(135deg, #ef4444, #dc2626)', // red
+                3: 'linear-gradient(135deg, #10b981, #059669)', // green
+                4: 'linear-gradient(135deg, #ef4444, #dc2626)', // red
+                5: 'linear-gradient(135deg, #8b5cf6, #a855f7)', // violet
+                6: 'linear-gradient(135deg, #ef4444, #dc2626)', // red
+                7: 'linear-gradient(135deg, #10b981, #059669)', // green
+                8: 'linear-gradient(135deg, #ef4444, #dc2626)', // red
+                9: 'linear-gradient(135deg, #10b981, #059669)'  // green
+            };
+
+            elements.numberGrid.innerHTML = '';
+            for (let i = 0; i <= 9; i++) {
+                const numberBtn = document.createElement('div');
+                numberBtn.className = 'number-ball cursor-pointer';
+                numberBtn.style.background = colors[i];
+                numberBtn.textContent = i;
+                numberBtn.addEventListener('click', () => selectNumber(i));
+                elements.numberGrid.appendChild(numberBtn);
+            }
+        }
+
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const tabName = e.target.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+
+            // Color betting buttons
+            document.querySelectorAll('.color-bet-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const color = e.currentTarget.dataset.color;
+                    selectColor(color);
+                });
+            });
+
+            // Bet amount buttons
+            document.querySelectorAll('.bet-amount-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const amount = parseInt(e.target.dataset.amount);
+                    elements.betAmount.value = amount;
+                    gameState.betAmount = amount;
+                });
+            });
+
+            // Bet amount input
+            elements.betAmount.addEventListener('input', (e) => {
+                gameState.betAmount = parseInt(e.target.value) || 0;
+            });
+
+            // Place bet button
+            elements.placeBetBtn.addEventListener('click', placeBet);
+
+            // Result modal
+            document.getElementById('closeResultModal').addEventListener('click', closeResultModal);
+
+            // Admin controls
+            setupAdminControls();
+        }
+
+        // Setup Admin Controls
+        function setupAdminControls() {
+            const winRateInputs = ['green', 'violet', 'red'];
+            winRateInputs.forEach(color => {
+                const slider = document.getElementById(`${color}WinRate`);
+                const display = document.getElementById(`${color}WinRateValue`);
+                
+                slider.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    display.textContent = `${value}%`;
+                    gameState.winRates[color] = parseInt(value);
+                });
+            });
+        }
+
+        // Switch Tabs
+        function switchTab(tabName) {
+            // Update nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-gray-500');
+            });
+            
+            const activeTab = document.querySelector(`[data-tab="${tabName}"]`);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('text-gray-500');
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        }
+
+        // Select Color
+        function selectColor(color) {
+            gameState.selectedColor = color;
+            gameState.selectedNumber = null; // Reset number selection
+            
+            // Update UI
+            document.querySelectorAll('.color-bet-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-white');
+            });
+            
+            document.querySelector(`[data-color="${color}"]`).classList.add('ring-4', 'ring-white');
+        }
+
+        // Select Number
+        function selectNumber(number) {
+            gameState.selectedNumber = number;
+            gameState.selectedColor = null; // Reset color selection
+            
+            // Update UI
+            document.querySelectorAll('.number-ball').forEach(ball => {
+                ball.classList.remove('ring-4', 'ring-white');
+            });
+            
+            document.querySelectorAll('.color-bet-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-white');
+            });
+            
+            event.target.classList.add('ring-4', 'ring-white');
+        }
+
+        // Place Bet
+        function placeBet() {
+            if (!gameState.isGameActive) {
+                alert('Game is not active');
+                return;
+            }
+
+            if (!gameState.selectedColor && gameState.selectedNumber === null) {
+                alert('Please select a color or number');
+                return;
+            }
+
+            if (!gameState.betAmount || gameState.betAmount <= 0) {
+                alert('Please enter a valid bet amount');
+                return;
+            }
+
+            if (gameState.betAmount > gameState.balance) {
+                alert('Insufficient balance');
+                return;
+            }
+
+            // Create bet
+            const bet = {
+                id: Date.now(),
+                period: gameState.period,
+                type: gameState.selectedColor || gameState.selectedNumber,
+                amount: gameState.betAmount,
+                timestamp: new Date()
+            };
+
+            gameState.currentBets.push(bet);
+            gameState.balance -= gameState.betAmount;
+            
+            // Update display
+            updateDisplay();
+            updateActiveBets();
+            
+            // Reset selections
+            resetSelections();
+            
+            // Show confirmation
+            showNotification('Bet placed successfully!', 'success');
+        }
+
+        // Reset Selections
+        function resetSelections() {
+            gameState.selectedColor = null;
+            gameState.selectedNumber = null;
+            gameState.betAmount = 0;
+            elements.betAmount.value = '';
+            
+            document.querySelectorAll('.color-bet-btn').forEach(btn => {
+                btn.classList.remove('ring-4', 'ring-white');
+            });
+            
+            document.querySelectorAll('.number-ball').forEach(ball => {
+                ball.classList.remove('ring-4', 'ring-white');
+            });
+        }
+
+        // Game Timer
+        function startGameTimer() {
+            setInterval(() => {
+                if (gameState.isGameActive) {
+                    gameState.timeRemaining--;
+                    
+                    if (gameState.timeRemaining <= 0) {
+                        processGameResult();
+                        gameState.timeRemaining = 90; // Reset timer
+                        gameState.period++;
+                    }
+                    
+                    updateTimer();
+                }
+            }, 1000);
+        }
+
+        // Process Game Result
+        function processGameResult() {
+            const winningNumber = generateResult();
+            const winningColor = getColorFromNumber(winningNumber);
+            
+            // Process bets
+            gameState.currentBets.forEach(bet => {
+                let won = false;
+                let payout = 0;
+                
+                if (typeof bet.type === 'string') {
+                    // Color bet
+                    if (bet.type === winningColor) {
+                        won = true;
+                        payout = bet.type === 'violet' ? bet.amount * 4.5 : bet.amount * 2;
+                    }
+                } else {
+                    // Number bet
+                    if (bet.type === winningNumber) {
+                        won = true;
+                        payout = bet.amount * 9;
+                    }
+                }
+                
+                if (won) {
+                    gameState.balance += payout;
+                }
+                
+                // Add to history
+                gameState.gameHistory.push({
+                    ...bet,
+                    result: winningNumber,
+                    won: won,
+                    payout: won ? payout : 0,
+                    profit: won ? payout - bet.amount : -bet.amount
+                });
+            });
+            
+            // Add to recent results
+            gameState.recentResults.unshift({
+                period: gameState.period,
+                number: winningNumber,
+                color: winningColor
+            });
+            
+            if (gameState.recentResults.length > 10) {
+                gameState.recentResults.pop();
+            }
+            
+            // Show result modal if there were bets
+            if (gameState.currentBets.length > 0) {
+                showResult(winningNumber, winningColor);
+            }
+            
+            // Clear current bets
+            gameState.currentBets = [];
+            
+            // Update displays
+            updateDisplay();
+            updateRecentResults();
+            updateActiveBets();
+        }
+
+        // Generate Result based on admin settings
+        function generateResult() {
+            const rand = Math.random() * 100;
+            let result;
+            
+            if (rand < gameState.winRates.green) {
+                const greenNumbers = [1, 3, 7, 9];
+                result = greenNumbers[Math.floor(Math.random() * greenNumbers.length)];
+            } else if (rand < gameState.winRates.green + gameState.winRates.violet) {
+                const violetNumbers = [0, 5];
+                result = violetNumbers[Math.floor(Math.random() * violetNumbers.length)];
+            } else {
+                const redNumbers = [2, 4, 6, 8];
+                result = redNumbers[Math.floor(Math.random() * redNumbers.length)];
+            }
+            
+            return result;
+        }
+
+        // Get Color from Number
+        function getColorFromNumber(number) {
+            if ([1, 3, 7, 9].includes(number)) return 'green';
+            if ([0, 5].includes(number)) return 'violet';
+            return 'red';
+        }
+
+        // Show Result Modal
+        function showResult(number, color) {
+            const resultNumber = document.getElementById('resultNumber');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDescription = document.getElementById('resultDescription');
+            const resultBetAmount = document.getElementById('resultBetAmount');
+            const resultProfit = document.getElementById('resultProfit');
+            
+            // Style result number
+            const colors = {
+                green: 'linear-gradient(135deg, #10b981, #059669)',
+                violet: 'linear-gradient(135deg, #8b5cf6, #a855f7)',
+                red: 'linear-gradient(135deg, #ef4444, #dc2626)'
+            };
+            
+            resultNumber.style.background = colors[color];
+            resultNumber.textContent = number;
+            
+            // Calculate total bet and profit
+            const totalBet = gameState.currentBets.reduce((sum, bet) => sum + bet.amount, 0);
+            const totalProfit = gameState.gameHistory
+                .filter(h => h.period === gameState.period)
+                .reduce((sum, h) => sum + h.profit, 0);
+            
+            resultTitle.textContent = totalProfit > 0 ? 'Congratulations!' : 'Better luck next time!';
+            resultDescription.textContent = `Winning number: ${number} (${color.charAt(0).toUpperCase() + color.slice(1)})`;
+            resultBetAmount.textContent = `₹${totalBet}`;
+            resultProfit.textContent = `₹${totalProfit}`;
+            resultProfit.className = `font-semibold ${totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`;
+            
+            elements.resultModal.classList.remove('hidden');
+            elements.resultModal.classList.add('flex');
+        }
+
+        // Close Result Modal
+        function closeResultModal() {
+            elements.resultModal.classList.add('hidden');
+            elements.resultModal.classList.remove('flex');
+        }
+
+        // Update Display
+        function updateDisplay() {
+            elements.balance.textContent = `₹${gameState.balance.toLocaleString()}`;
+            elements.period.textContent = gameState.period;
+            elements.totalAmount.textContent = `₹${gameState.balance.toLocaleString()}`;
+            elements.playersCount.textContent = Math.floor(Math.random() * 50) + 100;
+        }
+
+        // Update Timer
+        function updateTimer() {
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+            elements.timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update Recent Results
+        function updateRecentResults() {
+            const resultsHTML = gameState.recentResults.map(result => {
+                const colorClass = result.color === 'green' ? 'text-green-600' : 
+                                 result.color === 'violet' ? 'text-purple-600' : 'text-red-600';
+                return `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-sm text-gray-600">${result.period}</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-lg font-bold ${colorClass}">${result.number}</span>
+                            <div class="w-4 h-4 rounded-full ${result.color === 'green' ? 'bg-green-500' : 
+                                result.color === 'violet' ? 'bg-purple-500' : 'bg-red-500'}"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            elements.recentResults.innerHTML = resultsHTML || '<p class="text-gray-500 text-center">No recent results</p>';
+        }
+
+        // Update Active Bets
+        function updateActiveBets() {
+            const betsHTML = gameState.currentBets.map(bet => `
+                <div class="bg-gray-50 rounded-lg p-3 mb-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">${typeof bet.type === 'string' ? bet.type.charAt(0).toUpperCase() + bet.type.slice(1) : `Number ${bet.type}`}</span>
+                        <span class="font-bold">₹${bet.amount}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            elements.activeBets.innerHTML = betsHTML || '<p class="text-gray-500 text-center">No active bets</p>';
+        }
+
+        // Show Notification
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // Initialize Charts
+        function initCharts() {
+            // Win Rate Chart
+            const winRateCtx = document.getElementById('winRateChart').getContext('2d');
+            new Chart(winRateCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Green', 'Violet', 'Red'],
+                    datasets: [{
+                        data: [48, 20, 32],
+                        backgroundColor: ['#10b981', '#8b5cf6', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Trend Chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Period 285', 'Period 286', 'Period 287', 'Period 288', 'Period 289'],
+                    datasets: [{
+                        label: 'Green',
+                        data: [30, 35, 28, 42, 38],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Violet',
+                        data: [20, 15, 25, 18, 22],
+                        borderColor: '#8b5cf6',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Red',
+                        data: [50, 50, 47, 40, 40],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            // Performance Chart
+            const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    datasets: [{
+                        label: 'Profit',
+                        data: [1200, -800, 1500, 900, -600, 2100, 1800],
+                        backgroundColor: function(context) {
+                            return context.parsed.y >= 0 ? '#10b981' : '#ef4444';
+                        },
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Populate Transaction History
+        function populateTransactionHistory() {
+            const historyTable = document.getElementById('transactionHistory');
+            const sampleHistory = [
+                { period: 289, time: '12:45 PM', betType: 'Green', amount: 100, result: 7, profit: 200, status: 'Won' },
+                { period: 288, time: '12:43 PM', betType: 'Red', amount: 200, result: 3, profit: -200, status: 'Lost' },
+                { period: 287, time: '12:41 PM', betType: 'Number 5', amount: 50, result: 5, profit: 450, status: 'Won' },
+                { period: 286, time: '12:39 PM', betType: 'Violet', amount: 150, result: 8, profit: -150, status: 'Lost' }
+            ];
+
+            const historyHTML = sampleHistory.map(record => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.period}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">${record.time}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">${record.betType}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">₹${record.amount}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">${record.result}</td>
+                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium ${record.profit >= 0 ? 'text-green-600' : 'text-red-600'}">
+                        ₹${record.profit}
+                    </td>
+                    <td class="px-4 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            record.status === 'Won' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        }">
+                            ${record.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            historyTable.innerHTML = historyHTML;
+        }
+
+        // Initialize the game when page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
