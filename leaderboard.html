@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff9a56, #ff6b35);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            padding: 20px 0;
+        }
+
+        .leaderboard-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .leaderboard-title {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+            border: 4px solid #fff;
+            position: relative;
+            display: inline-block;
+        }
+
+        .leaderboard-title::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: #ffdd59;
+            border-radius: 50%;
+            border: 3px solid #fff;
+        }
+
+        .leaderboard-item {
+            margin-bottom: 15px;
+            border-radius: 20px;
+            padding: 10px 10px;
+            /*box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);*/
+            /*transition: transform 0.3s ease, box-shadow 0.3s ease;*/
+            position: relative;
+            overflow: hidden;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .rank-1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border: 3px solid #fff;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border: 3px solid #fff;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            border: 3px solid #fff;
+        }
+
+        .rank-default {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            border: 2px solid #fff;
+        }
+
+        .rank-badge {
+            width: 50px;
+            height: 50px;
+            /*border-radius: 50%;*/
+            /*background: #fff;*/
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);*/
+            position: relative;
+        }
+
+        .crown {
+            position: absolute;
+            top: -8px;
+            font-size: 16px;
+            color: #ff6b35;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            /*box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);*/
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .coins {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .coin-icon {
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .shine-effect {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <!-- Header -->
+        <div class="leaderboard-header">
+            <div class="leaderboard-title pulse">
+                Leaderboard
+            </div>
+        </div>
+
+        <!-- Leaderboard Items -->
+        <div class="leaderboard-list">
+            <!-- Rank 1 -->
+        
+        
+            @foreach ($topUsers as $index => $user)
+            <div class="leaderboard-item @if($loop->iteration == 1) rank-1 @endif @if($loop->iteration == 2) rank-2 @endif @if($loop->iteration == 3) rank-3 @endif @if($loop->iteration > 3) rank-default @endif">
+                <div class="shine-effect"></div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="rank-badge">
+                            <img src="/badge/{{$loop->iteration}}.png" style="width: 100%;" />
+                        </div>
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        
+                        <div class="username">{{ $user->fname }} {{ $user->lname }}</div>
+                    </div>
+                    <div class="coins">
+                        <div class="coin-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        {{ number_format($user->total_purchase_price ?? 0, 2) }}
+                    </div>
+                </div>
+            </div>
+            @endforeach
+            
+            
+
+          
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
